@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3001
+const port = process.env.PORT || 3001
 const {UserModel, TodoModel} = require('./db');
 const mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://4ytvoch:5NbYQRNTUeT7KmPn@cluster0.s2ief.mongodb.net/todo_db');
