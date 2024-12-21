@@ -1,0 +1,72 @@
+*{
+    margin: 0;
+    color: #fff;
+
+    font-family: "Parkinsans", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-weight: 400;
+}
+.loginForm{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color:#020917;
+    height: 100vh;
+    /* width: 3vw; */
+}
+
+.container,.email,.password{
+    border: 0.5px solid #9298a6; 
+    border-radius: 7px;
+    background-color: #020917;
+}
+
+.email,.password{
+    height: 40px;
+    line-height: 40px;
+    margin-bottom: 20px;
+    padding-left: 8px;
+}
+
+.container{
+    width: 27%;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 25px;          
+}
+
+.loginBtn{
+    background-color: #153782;
+    height: 40px;
+    border: none;
+    border-radius: 7px;
+    font-size: 14px;
+}
+
+.label{
+    margin-bottom: 10px;
+}
+
+.email::placeholder, .password::placeholder{
+    font-size: 14px;
+    color: #9298a6;            
+}
+
+.signup_redirect{
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+.login_redirect{
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+#loginLog {
+    font-size: 12px;
+    color: red;
+    margin-bottom: 5px;
+    margin-top: 0px;
+    padding-top: 0px;
+}

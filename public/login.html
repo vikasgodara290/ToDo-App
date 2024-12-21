@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Parkinsans:wght@300..800&display=swap" rel="stylesheet">
+
+    <link href="./style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+
+</head>
+<body>
+    <div class="loginForm">
+        <div class="container">
+            <h1 style="padding-bottom: 20px;">Signin to your Account</h1>
+            <div class="label">Email</div>
+            <input class="email" type="email" placeholder="name@gmail.com">
+            <div class="label">Password</div>
+            <input class="password" type="password" placeholder="More the 8 Characters">
+            <span id="loginLog"></span>
+            <button class="loginBtn" onclick="loginBtn()">Login</button>
+            <p class="signup_redirect">create one <a href="./signup.html">Signup</a></p>
+        </div>
+    </div>
+
+    <script>
+        if(localStorage.getItem("token")){
+            window.location.href = 'http://localhost:3000/todo.html'
+        }
+        async function loginBtn(){
+            const email = document.getElementsByClassName('email')[0].value;
+            const password = document.getElementsByClassName('password')[0].value;
+            let token =  null;
+            const response = await axios.post('http://localhost:3001/login', {
+                email : email,
+                password : password
+            });
+
+            token = response.data.token;
+            if(token != null){
+                localStorage.setItem("token", response.data.token);
+                window.location.href = 'http://localhost:3000/todo.html'
+            }
+            else{
+                document.getElementById('loginLog').innerHTML = "email or password is incorrect";
+            }
+
+        }
+    </script>
+</body>
+</html>

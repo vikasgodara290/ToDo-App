@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo</title>
+    <link href="./todo.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="nav">
+        <h1 id="greeting">To Do</h1>
+        <button id="logoutBtn" onclick="logoutBtn()">Log out</button>
+    </div>
+
+    <div id="todoAdd">
+        <input id="todoInput" placeholder="add your task">
+        <button id="addBtn"  onclick="addBtn()">Add Task</button>
+    </div>
+
+    <div id="todoItems">
+        <!-- <div class="todoItem">
+            go to gym
+            <div class="btnDiv">
+                <button class="editBtn"></button>
+                <button class="editBtn"></button>
+            </div>
+        </div> -->
+    </div>
+
+    <script>
+        renderList()
+
+        function logoutBtn(){
+            localStorage.removeItem("token");
+            window.location.href = 'http://localhost:3000/login.html'
+        }
+
+        async function addBtn(){
+            let task = document.getElementById('todoInput').value;
+            await axios.post('http://localhost:3001/todo', 
+            {
+                task : task
+            },
+            {
+                headers : {
+                token : localStorage.getItem('token')
+                }
+            })
+            document.getElementById('todoItems').innerHTML = "";
+            renderList();
+        }
+
+        async function deleteBtn(id) {
+            await axios.delete('http://localhost:3001/todo?id=' + id , {
+                headers : {
+                    token : localStorage.getItem("token")
+                }
+            });
+
+            document.getElementById('todoItems').innerHTML = "";
+            renderList()
+        }
+
+        async function editBtn(index, id) {
+            
+            const selectedTodoItemDiv = document.getElementsByClassName('todoItem')[index]
+            selectedTodoItemDiv.innerHTML  = ""
+
+            const todoEditInput = document.createElement('input')
+            todoEditInput.className = 'todoEditInput';
+            //const selectedTodoItem = document.getElementsByClassName('taskDesDiv')[index]
+            selectedTodoItemDiv.appendChild(todoEditInput)
+
+            
+            let btnDiv = document.createElement("Div");
+            btnDiv.className= "btnDiv"
+            selectedTodoItemDiv.appendChild(btnDiv);
+
+            const doneBtn = document.createElement('button')
+            doneBtn.innerHTML = 'Done'
+            doneBtn.className = 'doneBtn'
+            btnDiv.appendChild(doneBtn)
+            doneBtn.setAttribute("onclick", `doneBtn('${id}')`)
+
+            const cancelBtn = document.createElement('button')
+            cancelBtn.innerHTML = 'Cancel'
+            cancelBtn.className = 'cancelBtn'
+            btnDiv.appendChild(cancelBtn)
+            cancelBtn.setAttribute("onclick", "cancel()");
+
+
+        }
+
+        async function doneBtn(id) {
+            const task = document.getElementsByClassName('todoEditInput')[0].value;
+            const response = await axios.put('http://localhost:3001/todo', 
+            {
+                id : id,
+                task : task
+            },
+            {
+                headers : {
+                    token : localStorage.getItem("token")
+                }
+            })
+            document.getElementById('todoItems').innerHTML = "";
+            renderList();
+        }
+
+        function cancel(){
+            document.getElementById('todoItems').innerHTML = "";
+            renderList()
+        }
+
+        async function renderList(){
+            let todos = await axios.get('http://localhost:3001/todo',{
+                headers : {
+                    token : localStorage.getItem('token')
+                }
+            })
+
+            const todosObj = todos.data;
+
+            todosObj.forEach((todoItem, index) => {
+                let todoDiv = document.createElement("Div");
+                todoDiv.className= "todoItem";
+                document.getElementById('todoItems').appendChild(todoDiv);
+
+                let taskDesDiv = document.createElement("Div");
+                taskDesDiv.className= "taskDesDiv"
+                taskDesDiv.innerHTML = '➢' + '&nbsp;&nbsp;&nbsp;&nbsp;'+ todoItem.task;
+                todoDiv.appendChild(taskDesDiv);
+
+                let btnDiv = document.createElement("Div");
+                btnDiv.className= "btnDiv"
+                todoDiv.appendChild(btnDiv);
+
+                let editBtn = document.createElement("button");
+                editBtn.innerHTML = "Edit"
+                editBtn.className = "editBtn"
+                editBtn.setAttribute("onclick", `editBtn(${index},'${todoItem._id}')`);
+                
+                let deleteBtn = document.createElement("button");
+                deleteBtn.innerHTML = "Delete"
+                deleteBtn.className = "deleteBtn"
+                deleteBtn.setAttribute("onclick", `deleteBtn('${todoItem._id}')`);
+
+                btnDiv.appendChild(editBtn);
+                btnDiv.appendChild(deleteBtn);
+            });
+        }
+    </script>
+</body>
+</html>

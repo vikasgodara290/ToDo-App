@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Parkinsans:wght@300..800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+
+    <link href="./style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="loginForm">
+        <div class="container">
+            <h1 style="padding-bottom: 20px;">Signup to your Account</h1>
+            <div class="label">Email</div>
+            <input class="email" type="email" placeholder="name@gmail.com">
+            <div class="label">Password</div>
+            <input class="password" type="password" placeholder="More the 8 Characters">
+            <button class="loginBtn" onclick="signupBtn()">Signup</button>
+            <p class="login_redirect">already have a account <a href="./login.html">Login</a></p>
+        </div>
+    </div>
+
+    <script>
+        if(localStorage.getItem("token")){
+            window.location.href = 'http://localhost:3000/todo.html'
+        }
+        async function signupBtn() {
+            const email = document.getElementsByClassName('email')[0].value;
+            const password = document.getElementsByClassName('password')[0].value; 
+        
+            var msg = await axios.post('http://localhost:3001/signup',{
+                email : email,
+                password : password
+            })
+
+            if(msg){
+                alert(msg.data.msg)
+            }
+        }
+    </script>
+</body>
+</html>
