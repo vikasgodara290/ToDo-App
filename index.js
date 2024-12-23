@@ -1,4 +1,5 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
 const app = express();
 const port = process.env.PORT || 3001
 const {UserModel, TodoModel} = require('./db');
@@ -12,8 +13,6 @@ const cors = require('cors');
 
 app.use(express.json());
 app.use(cors());
-
-let todoList = [];
 
 function auth(req, res, next){
     const token = req.headers.token;
@@ -40,17 +39,20 @@ app.post('/login', async (req, res) => {
 
     currentUser = await UserModel.findOne({
         email : email,
-        password : password
     });
   
     if(currentUser != null){
-        const token = jwt.sign({
-            id : currentUser._id
-        }, JSON_SECRET);
-    
-        res.json({
-            token : token
-        });
+        const isUser = await bcrypt.compare(password, currentUser.password)
+
+        if(isUser){
+            const token = jwt.sign({
+                id : currentUser._id
+            }, JSON_SECRET);
+        
+            res.json({
+                token : token
+            });
+        }
     }
     else{
         res.send('email or password is incorrect');
@@ -61,9 +63,11 @@ app.post('/signup', async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
+    const hashedPass = await bcrypt.hash(password, 5);
+
     const newUser = await UserModel.create({
         email : email,
-        password : password
+        password : hashedPass
     });
   
     if(newUser){
